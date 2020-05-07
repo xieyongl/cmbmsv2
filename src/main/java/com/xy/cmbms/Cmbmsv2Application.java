@@ -12,10 +12,10 @@ import org.springframework.context.annotation.ComponentScan;
 @AutoConfigurationPackage
 @MapperScan(basePackages = "com.xy.cmbms.mapper")
 @ComponentScan(basePackages = "com.xy.cmbms")
-public class CmbmsApplication {
+public class Cmbmsv2Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CmbmsApplication.class, args);
+		SpringApplication.run(Cmbmsv2Application.class, args);
 	}
 
 }
