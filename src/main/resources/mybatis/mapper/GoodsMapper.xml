@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xy.cmbms.mapper.GoodsMapper">
+
+    <!--增加物资-->
+    <insert id="addGoods" parameterType="com.xy.cmbms.entity.vos.GoodsVo" >
+
+    </insert>
+
+    <!--删除物资-->
+    <update id="deleteGoods">
+        UPDATE tbl_goods
+        SET update_by = #{userId},
+            update_date = #{updateDate},
+            goods_status = 0,
+            del_flag = 0
+        WHERE id = #{goodsId} and del_flag = 1
+    </update>
+
+    <!--删除同类别所有物资-->
+    <update id="deleteTypeAllGoods">
+        UPDATE tbl_goods
+        SET update_by = #{userId},
+            update_date = #{updateDate},
+            goods_status = 0,
+            del_flag = 0
+        WHERE type_id = #{typeId} and del_flag = 1
+    </update>
+
+    <!--查询物资-->
+    <select id="selectGoodsByTypeId" resultType="com.xy.cmbms.entity.dtos.GoodsDto">
+        SELECT *
+        from tbl_goods a
+        LEFT JOIN tbl_type_goods b
+        ON a.type_id = b.id
+        WHERE a.del_flag = 1
+        and a.type_id = #{typeId}
+    </select>
+    
+    <!--修改物资-->
+    <update id="updateGoods">
+
+    </update>
+
+    <select id="getGoodsTypeByOfficeId" resultType="com.xy.cmbms.entity.vos.TypeGoodsVo">
+      SELECT id,
+			office_id as officeId,
+			type_name as typeName,
+			goods_pic as goodsPic,
+			goods_total as goodsTotal,
+			goods_remain as goodsRemain,
+			create_by as createBy,
+			create_date as createDate,
+			update_by as updateBy,
+			update_date as updateDate,
+			status
+			remarks,
+			del_flag as delFlag
+        FROM tbl_type_goods
+        WHERE del_flag = 1 and office_id = #{officeId}
+    </select>
+
+</mapper>

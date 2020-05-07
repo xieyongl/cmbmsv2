@@ -1,0 +1,30 @@
+server:
+  port: 8011
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xy?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: 123456
+
+  #Redis 配置（暂不用也行）
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 'X0dxeLpK'
+
+
+
+mybatis:
+  #扫描实体(别名)
+  type-aliases-package: com.xy.cmbms.entity.dos
+  #mapper xml文件所在位置
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  #开启驼峰命名
+#  configuration:
+#    map-underscore-to-camel-case: true
+
+
+

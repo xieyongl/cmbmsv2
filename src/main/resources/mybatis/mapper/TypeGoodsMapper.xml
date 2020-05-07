@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xy.cmbms.mapper.TypeGoodsMapper">
+    <!--判断当前机构组织是否有此类别物资-->
+    <select id="hasTypeGoods" resultType="com.xy.cmbms.entity.dos.TypeGoods">
+        SELECT *
+        FROM tbl_type_goods tg
+        WHERE  tg.office_id = #{officeId} and tg.type_name = #{typeName}
+    </select>
+
+    <!--删除当前机构的该类别物资-->
+    <update id="deleteTypeGoods">
+        UPDATE tbl_type_goods
+          SET  update_by = #{userId},
+               update_date = #{updateDate},
+               status = 0,
+			   del_flag = 0
+		WHERE office_id = #{officeId} and id = #{id} and del_flag = 1
+    </update>
+
+    <!--查询种类物资-->
+    <select id="selectGoodsByTypeId" resultType="com.xy.cmbms.entity.dos.TypeGoods">
+      	SELECT *
+		FROM tbl_type_goods
+  		where id = #{typeGoodsId} and del_flag = 1
+
+    </select>
+
+    <!--模糊查询物资-->
+    <select id="queryTypeGoods" resultType="com.xy.cmbms.entity.dtos.TypeGoodsDto">
+      SELECT *
+      FROM tbl_type_goods a
+      LEFT JOIN tbl_office b
+      ON a.office_id = b.id
+      where type_name LIKE '%${goodsName}%'
+    </select>
+
+    <update id="updateRemain">
+      UPDATE tbl_type_goods
+      SET goods_remain = #{goodsRemain}
+      WHERE id = #{typeId}
+      AND del_flag = 1
+    </update>
+
+
+    <update id="goodsPlace">
+        UPDATE tbl_type_goods
+        set goods_remain = #{afterNum}, update_date = NOW()
+        WHERE id = #{typeId}
+    </update>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xy.cmbms.mapper.UserMapper">
+
+    <select id="getUserByLogin" resultType="com.xy.cmbms.entity.dos.User">
+      SELECT user_id as userId,
+			user_name as userName,
+			office_id as officeId,
+			user_type as userType,
+			identity_number as identityNumber,
+			qq,
+			email,
+			phone,
+			user_pic as userPic,
+			login_date as loginDate,
+			update_by as updateBy,
+			update_date as updateDate,
+			remarks,
+			del_flag as delFlag
+        FROM tbl_user
+        WHERE user_name = #{userName} and pass_word = #{enctyPwd} and del_flag = '1'
+    </select>
+
+    <!--根据用户名、密码判断当前用户是否存在-->
+    <select id="isExist" resultType="java.lang.Integer">
+        SELECT count(*) FROM tbl_user
+        WHERE user_name = #{userName}
+        <if test="passWord != null and passWord != ''">
+            and pass_word = #{passWord}
+        </if>
+    </select>
+
+    <select id="getAllUser" resultType="com.xy.cmbms.entity.dos.User">
+        SELECT *
+        FROM tbl_user
+        WHERE del_flag = 1
+    </select>
+</mapper>

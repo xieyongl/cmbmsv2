@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xy.cmbms.mapper.BorinfoMapper">
+
+    <select id="getAduitOrder" resultType="com.xy.cmbms.entity.vos.BorVo">
+        SELECT a.* ,
+        b.user_name,
+        b.user_id as userId,
+        c.name as officeName,
+        c.id as officeId
+        FROM tbl_borinfo a
+        LEFT JOIN tbl_user b
+        ON a.borrow_party = b.user_id
+        LEFT JOIN tbl_office c
+        ON b.office_id = c.id
+        WHERE a.del_flag = 1 AND ISNULL(a.borrow_opinion)
+    </select>
+
+    <select id="getOrderById" resultType="com.xy.cmbms.entity.vos.BorVo">
+        SELECT a.* ,
+        b.user_name,
+        b.user_id as userId,
+        c.name as officeName,
+        c.id as officeId
+        FROM tbl_borinfo a
+        LEFT JOIN tbl_user b
+        ON a.borrow_party = b.user_id
+        LEFT JOIN tbl_office c
+        ON b.office_id = c.id
+        WHERE a.del_flag = 1 AND ISNULL(a.borrow_opinion) AND a.id = #{orderId}
+    </select>
+
+    <update id="auditOrder">
+        update tbl_borinfo
+        SET borrow_opinion = #{opinion},audit_by = #{userId}
+        WHERE id = #{orderId} AND del_flag = 1
+    </update>
+
+    <update id="updateOrderZt">
+        UPDATE tbl_borinfo
+        set del_flag = 0
+        WHERE id = #{orderId}
+    </update>
+</mapper>

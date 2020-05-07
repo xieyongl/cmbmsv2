@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xy.cmbms.mapper.BorrowMapper">
+
+    <select id="queryNumber" resultType="java.lang.Integer">
+        SELECT goods_remain
+        FROM tbl_type_goods
+        WHERE id = #{typeId} AND del_flag = 1
+    </select>
+
+    <update id="auditOrder">
+        update tbl_borrow
+        SET type = #{type} and borinfo_id = #{orderId}
+        where del_flag = 1
+    </update>
+
+
+    <update id="borrowGoods">
+        update tbl_borrow
+        SET type = #{type} and borinfo_id = #{orderId}
+        where del_flag = 1
+    </update>
+
+    <select id="selectGoodsByOrder" resultType="com.xy.cmbms.entity.vos.BackGoods">
+        SELECT
+            a.id as borinfoId,
+            a.borrow_party as borrowParty,
+            a.target_office as targetOffice,
+            a.borrow_time as borrowTime,
+            a.return_time as returnTime,
+            a.borrow_opinion as borrowOpinion,
+            a.audit_by as auditBy,
+            a.usefor as userfor,
+            a.del_flag as borinfoFlag
+--             b.id as borrowId,
+--             b.type_id as typeId,
+--             b.borrow_number as borrowNumber,
+--             b.type as type,
+--             b.borrow_address as borrowAddress,
+--             b.return_address as returnAddress,
+--             b.del_flag as borrowFlag
+
+        FROM tbl_borinfo a
+        WHERE a.id = #{orderId} AND a.del_flag = 1
+    </select>
+
+    <select id="selectBorrowByBorinfoId" resultType="com.xy.cmbms.entity.dos.Borrow">
+        SELECT *
+        from tbl_borrow
+        WHERE borinfo_id = #{borinfoId} AND type != 3 and del_flag = 1
+    </select>
+
+
+
+
+</mapper>
