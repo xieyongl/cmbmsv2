@@ -3,29 +3,32 @@
 
 <mapper namespace="com.xy.cmbms.mapper.UserMapper">
 
-    <select id="getUserByLogin" resultType="com.xy.cmbms.entity.dos.User">
-      SELECT user_id as userId,
-			user_name as userName,
-			office_id as officeId,
-			user_type as userType,
-			identity_number as identityNumber,
-			qq,
-			email,
-			phone,
-			user_pic as userPic,
-			login_date as loginDate,
-			update_by as updateBy,
-			update_date as updateDate,
-			remarks,
-			del_flag as delFlag
-        FROM tbl_user
-        WHERE user_name = #{userName} and pass_word = #{enctyPwd} and del_flag = '1'
+    <select id="getUserByLogin" resultType="com.xy.cmbms.entity.vos.UserVo">
+      SELECT a.user_id as userId,
+			a.user_name as userName,
+			a.office_id as officeId,
+			a.user_type as userType,
+			a.identity_number as identityNumber,
+			a.qq,
+			a.email,
+			a.phone,
+			a.user_pic as userPic,
+			a.login_date as loginDate,
+			a.update_by as updateBy,
+			a.update_date as updateDate,
+			a.remarks,
+			a.del_flag as delFlag,
+			b.name as officeName
+        FROM tbl_user a
+        LEFT JOIN tbl_office b
+        ON a.office_id = b.id
+        WHERE a.phone = #{phone} and a.pass_word = #{enctyPwd} and a.del_flag = '1'
     </select>
 
     <!--根据用户名、密码判断当前用户是否存在-->
     <select id="isExist" resultType="java.lang.Integer">
         SELECT count(*) FROM tbl_user
-        WHERE user_name = #{userName}
+        WHERE phone = #{phone}
         <if test="passWord != null and passWord != ''">
             and pass_word = #{passWord}
         </if>
@@ -36,4 +39,28 @@
         FROM tbl_user
         WHERE del_flag = 1
     </select>
+
+    <update id="deleteUser">
+        UPDATE tbl_user
+        set del_flag = 0
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="isAdmin" resultType="com.xy.cmbms.entity.vos.UserVo">
+        SELECT *
+        FROM tbl_user
+        WHERE user_id = #{userId} AND user_type = 0 and del_flag = 1
+    </select>
+
+    <update id="relateToOffice">
+        update tbl_user
+		set office_id = #{officeId}
+		WHERE user_id = #{userId} and del_flag = 1
+    </update>
+
+    <update id="updateUserType">
+		update tbl_user
+		set user_type = #{userType}
+		WHERE user_id = #{userId} and del_flag = 1
+    </update>
 </mapper>

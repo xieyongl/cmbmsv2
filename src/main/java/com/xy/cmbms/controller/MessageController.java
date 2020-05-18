@@ -6,6 +6,7 @@ import com.xy.cmbms.entity.vos.MessageVo;
 import com.xy.cmbms.enums.ErrorEnum;
 import com.xy.cmbms.service.MessageService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,8 @@ import java.util.List;
  */
 @Api(value = "消息资讯", description = "消息资讯")
 @RestController
-@RequestMapping("/messageController")
+@RequestMapping("api/messageController")
+@CrossOrigin
 public class MessageController {
 
     @Resource
@@ -47,19 +49,27 @@ public class MessageController {
         return new ResponseVo(ErrorEnum.SUCCESS,messageVo);
     }
 
-
+    /**
+     *
+     * @param msgId
+     * @param auditOpinion 1同意 0 不同意
+     * @param userId
+     * @return
+     */
     @ApiOperation(value = "审核资讯消息", notes = "审核资讯消息")
     @RequestMapping(value = "/auditMsg", method = RequestMethod.POST)
-    public ResponseVo auditMsg(@RequestParam(value="msgId") Integer msgId, @RequestParam(value="auditResults") Integer auditResults,
-                               @RequestParam(value="auditOpinion") String auditOpinion, @RequestParam(value="userId") Integer userId) {
-        int ret = messageService.auditMsg(msgId, auditResults, auditOpinion, userId);
+    public ResponseVo auditMsg(@RequestParam(value="msgId") Integer msgId,
+                               @RequestParam(value="auditOpinion") int auditOpinion,
+                               @RequestParam(value="userId") Integer userId) {
+        int ret = messageService.auditMsg(msgId, auditOpinion, userId);
         return new ResponseVo(ErrorEnum.SUCCESS,ret);
     }
 
-    @ApiOperation(value = "获取所有消息资讯，页面展现最前面四个，点击更多获取其他的", notes = "获取所有消息资讯，页面展现最前面四个，点击更多获取其他的")
+    @ApiImplicitParam(name="flag",value="1.所有消息 2.待审核消息 3.审核通过的消息 4.审核不通过的消息",dataType="int", paramType = "query")
+    @ApiOperation(value = "获取消息资讯", notes = "获取消息资讯")
     @RequestMapping(value = "/getMessageList", method = RequestMethod.GET)
-    public ResponseVo getMessageList() {
-        List<MessageVo> list = messageService.getMessageList();
+    public ResponseVo getMessageList(int flag) {
+        List<MessageVo> list = messageService.getMessageList(flag);
         return new ResponseVo(ErrorEnum.SUCCESS,list);
     }
 }

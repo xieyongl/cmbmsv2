@@ -4,9 +4,9 @@
 <mapper namespace="com.xy.cmbms.mapper.AuditMapper">
 
     <update id="updateAuditMsg">
-        UPDATE tbl_audit
-        SET audit_results = #{auditResults}, audit_opinion = #{auditOpinion}, audit_by = #{userId},audit_time = NOW()
-        WHERE msg_id = #{msgId} AND  del_flag = 1
+        UPDATE tbl_message
+        set publish = #{auditOpinion}, publish_time = now(), audit_by = #{userId}
+        WHERE del_flag = 1 and id = #{msgId}
     </update>
 
 

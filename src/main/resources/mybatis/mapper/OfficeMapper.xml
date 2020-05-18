@@ -6,4 +6,56 @@
     <select id="isExistByOfficeName" resultType="integer">
       SELECT count(*) from tbl_office where name = #{officeName}
     </select>
+
+    <select id="getAllOffice" resultType="com.xy.cmbms.entity.vos.OfficeVo">
+	    SELECT
+			id,
+			name,
+			type,
+			primary_person as primaryPerson,
+			phone,
+			email,
+			create_by as createBy,
+			create_date as createDate,
+			update_by as updateBy,
+			update_date as updateDate,
+			state,
+			remarks
+		FROM tbl_office
+		WHERE del_flag = 1
+		<if test="flag == 1">
+			AND state = 1
+		</if>
+		<if test="flag == 2">
+			AND state = 2
+		</if>
+    </select>
+
+	<select id="getOfficeByQuery" resultType="com.xy.cmbms.entity.vos.OfficeVo">
+		 SELECT
+			id,
+			name,
+			type,
+			primary_person as primaryPerson,
+			phone,
+			email,
+			create_by as createBy,
+			create_date as createDate,
+			update_by as updateBy,
+			update_date as updateDate,
+			state,
+			remarks
+		FROM tbl_office
+		WHERE del_flag = 1
+		 and name LIKE '%${officeName}%'
+	</select>
+
+	<update id="auditOffice">
+		UPDATE tbl_office
+		SET update_by = #{auditUserId}, state = #{opinion}, update_date = now()
+		<if test="userId != null and userId != ''">
+			, create_by = #{userId}
+		</if>
+		WHERE id = #{officeId}
+	</update>
 </mapper>

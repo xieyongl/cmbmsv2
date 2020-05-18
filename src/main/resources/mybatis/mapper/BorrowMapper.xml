@@ -3,10 +3,33 @@
 
 <mapper namespace="com.xy.cmbms.mapper.BorrowMapper">
 
-    <select id="queryNumber" resultType="java.lang.Integer">
+
+    <resultMap id="getOrderMap" type="com.xy.cmbms.entity.vos.BorVo">
+        <id column="id" property="id"/>
+        <result column="borrowParty" property="borrowParty"/>
+        <result column="userName" property="userName"/>
+        <result column="targetOffice" property="targetOffice"/>
+        <result column="officeName" property="officeName"/>
+        <result column="borrowTime" property="borrowTime"/>
+        <result column="returnTime" property="returnTime"/>
+        <result column="borrowOpinion" property="borrowOpinion"/>
+        <result column="borrowType" property="borrowType"/>
+        <result column="usefor" property="usefor"/>
+        <collection property="borrowList" ofType="com.xy.cmbms.entity.vos.BorrowVo" column="id">
+            <result column="borinfoId" property="borinfoId"/>
+            <result column="goodsId" property="goodsId"/>
+            <result column="goodsName" property="goodsName"/>
+            <result column="borrowNumber" property="borrowNumber"/>
+            <result column="type" property="type"/>
+            <result column="borrowAddress" property="borrowAddress"/>
+            <result column="returnAddress" property="returnAddress"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryNumber" resultType="int">
         SELECT goods_remain
-        FROM tbl_type_goods
-        WHERE id = #{typeId} AND del_flag = 1
+        FROM tbl_goods
+        WHERE id = #{goodsId} AND del_flag = 1 and status = 1
     </select>
 
     <update id="auditOrder">
@@ -16,13 +39,19 @@
     </update>
 
 
+    <!--<update id="auditBroinfo">-->
+        <!--UPDATE tbl_borinfo-->
+        <!--set borrow_opinion = #{opinion}, audit_by = #{userId}-->
+        <!--WHERE id = #{orderId} and del_flag = 1-->
+    <!--</update>-->
+
     <update id="borrowGoods">
         update tbl_borrow
-        SET type = #{type} and borinfo_id = #{orderId}
+        SET type = #{type}, borinfo_id = #{orderId}
         where del_flag = 1
     </update>
 
-    <select id="selectGoodsByOrder" resultType="com.xy.cmbms.entity.vos.BackGoods">
+    <select id="selectGoodsByOrder" resultType="com.xy.cmbms.entity.vos.BackGoodsVo">
         SELECT
             a.id as borinfoId,
             a.borrow_party as borrowParty,
@@ -33,14 +62,6 @@
             a.audit_by as auditBy,
             a.usefor as userfor,
             a.del_flag as borinfoFlag
---             b.id as borrowId,
---             b.type_id as typeId,
---             b.borrow_number as borrowNumber,
---             b.type as type,
---             b.borrow_address as borrowAddress,
---             b.return_address as returnAddress,
---             b.del_flag as borrowFlag
-
         FROM tbl_borinfo a
         WHERE a.id = #{orderId} AND a.del_flag = 1
     </select>
@@ -51,6 +72,57 @@
         WHERE borinfo_id = #{borinfoId} AND type != 3 and del_flag = 1
     </select>
 
+    <select id="getAllOrderByTerm" resultMap="getOrderMap">
+        SELECT
+        a.id as id,
+        a.borrow_party as borrowParty,
+        b.user_name as userName,
+        a.target_office as targetOffice,
+        c.name as officeName,
+        date_format(a.borrow_time, '%Y-%m-%d') as borrowTime,
+        a.return_time as returnTime,
+        a.usefor as usefor,
+		d.goods_id as goodsId,
+		e.goods_name as goodsName,
+		d.borinfo_id as borinfoId,
+		d.borrow_number as borrowNumber,
+		d.borrow_address as borrowAddress,
+		d.return_address as returnAddress,
+        a.borrow_opinion as borrowOpinion,
+        a.borrow_type as borrowType
+
+        FROM tbl_borinfo a
+        LEFT JOIN tbl_borrow d
+        ON a.id = d.borinfo_id
+        LEFT JOIN tbl_goods e
+        ON d.goods_id = e.id
+        LEFT JOIN tbl_user b
+        ON a.borrow_party = b.user_id
+        LEFT JOIN tbl_office c
+        ON a.target_office = c.id
+        WHERE a.del_flag = 1
+        <if test="borrowOpinion != 2">
+            <choose>
+                <when test="borrowOpinion == null">
+                    AND ISNULL(a.borrow_opinion)
+                </when>
+                <otherwise>
+                   AND a.borrow_opinion = #{borrowOpinion}
+                </otherwise>
+
+            </choose>
+        </if>
+        <if test="borrowTime != null and borrowTime != ''">
+            and  date_format(a.borrow_time, '%Y-%m-%d') = #{borrowTime}
+        </if>
+        <if test="orderId != null and orderId != ''">
+            and a.id = #{orderId}
+        </if>
+        <if test="officeId != null and officeId != ''">
+            and a.target_office = #{officeId}
+        </if>
+      order by a.borrow_time DESC
+    </select>
 
 
 

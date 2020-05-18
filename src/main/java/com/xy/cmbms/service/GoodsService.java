@@ -4,8 +4,8 @@ package com.xy.cmbms.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xy.cmbms.entity.dos.Goods;
+import com.xy.cmbms.entity.dos.TypeGoods;
 import com.xy.cmbms.entity.vos.GoodsVo;
-import com.xy.cmbms.entity.vos.TypeGoodsVo;
 
 import java.util.List;
 
@@ -16,42 +16,53 @@ import java.util.List;
 public interface GoodsService extends IService<Goods> {
 
     /**
-     * 增加物资类别
+     * 增加物资类别(球类，桌椅类)
      */
-    Integer addGoodsType(TypeGoodsVo typeGoodsVo);
+    int addGoodsType(GoodsVo goodsVo);
+
+    /**
+     * 获取物资类别(球类，桌椅类)
+     */
+    List<TypeGoods> getGoodsTypeList();
+
+
+    /**
+     * 增加物资名称(篮球 足球)
+     */
+    Integer addGoods(GoodsVo goodsVo);
 
     /**
      * 删除物资
      */
-    Integer deleteGoods(Integer userId, Integer id);
+    Integer deleteGoods(Integer userId, Integer officeId, Integer id);
 
     /**
-     * 删除物资类别
+     * 删除物资大类
      */
-    Integer deleteTypeGoods(TypeGoodsVo typeGoodsVo);
+    int deleteGoodsType(Integer userId, Integer id);
 
-    /**
-     * 查询单个物资
-     */
-    GoodsVo selectGoods(Integer id);
-
-    /**
-     * 查询种类物资
-     * @param typeId
-     * @return
-     */
-    List<GoodsVo> selectGoodsByTypeId(Integer typeId);
 
     /**
      * 模糊查询物资
      */
-    Page<TypeGoodsVo> queryTypeGoods(String goodsName, Integer pageNum, Integer pageSize);
+    Page<GoodsVo> queryTypeGoods(String goodsName, Integer pageNum, Integer pageSize);
 
         /**
          * 修改物资
          */
-    boolean updateGoods(Goods goods);
+    boolean updateGoods(GoodsVo goodsVo);
 
 //    根据组织机构id获取组织所有物质种类
-    List<TypeGoodsVo> getGoodsTypeByOfficeId(String officeId);
+    List<GoodsVo> getGoodsByOfficeId(String officeId);
+
+
+    /**
+     * 获取所有机构所有物资信息
+     */
+    List<GoodsVo> getAllGoods(Integer officeId, Integer goodsTypeId);
+
+    /**
+     * 更改物资数量
+     */
+    void updateGoods(Integer flag, Integer goodsId, Integer updateNum, Integer userId, Integer goodsStatus, Integer goodsType);
 }

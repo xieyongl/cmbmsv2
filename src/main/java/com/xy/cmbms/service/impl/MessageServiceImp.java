@@ -49,7 +49,7 @@ public class MessageServiceImp extends ServiceImpl<MessageMapper, Message> imple
         message.setPic(messageVo.getPic());
         message.setCreateBy(messageVo.getUserId());
         message.setCreateTime(new Date());
-        message.setPublish(BaseConstant.ZERO);
+        message.setPublish(null);
         message.setDel_flag(BaseConstant.ONE);
         messageMapper.insert(message);
 
@@ -78,23 +78,23 @@ public class MessageServiceImp extends ServiceImpl<MessageMapper, Message> imple
     }
 
 
-    public List<MessageVo> getMessageList() {
+    public List<MessageVo> getMessageList(int flag) {
         List<MessageVo> list = new ArrayList<>();
         if (StringUtils.isEmpty(list)) {
             throw new BusinessException(ErrorEnum.NO_MESSAGE);
         }
-        list = messageMapper.getMessageList();
+        list = messageMapper.getMessageList(flag);
         return list;
     }
 
 
 
-    public int auditMsg(Integer msgId, Integer auditResults, String auditOpinion, Integer userId) {
-        Audit audit = messageMapper.selectAuditByMsgId(msgId);
-        if (!StringUtils.isEmpty(audit.getAuditResults())) {
+    public int auditMsg(Integer msgId, int auditOpinion, Integer userId) {
+        Message msg = messageMapper.selectAuditByMsgId(msgId);
+        if (!StringUtils.isEmpty(msg.getAuditBy()) && !StringUtils.isEmpty(msg.getPublishTime())) {
             throw new BusinessException(ErrorEnum.AUDIT_IS_OK);
         }
-        auditMapper.updateAuditMsg(msgId, auditResults, auditOpinion, userId);
+        auditMapper.updateAuditMsg(msgId, auditOpinion, userId);
         return 1;
     }
 

@@ -22,7 +22,7 @@ public interface MessageMapper extends BaseMapper<Message> {
 
     MessageVo getMessage(@Param("msgId") Integer msgId);
 
-    List<MessageVo> getMessageList();
+    List<MessageVo> getMessageList(@Param("flag") int flag);
 
-    Audit selectAuditByMsgId(@Param("msgId") Integer msgId);
+    Message selectAuditByMsgId(@Param("msgId") Integer msgId);
 }

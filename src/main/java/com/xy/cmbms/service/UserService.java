@@ -2,8 +2,11 @@ package com.xy.cmbms.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xy.cmbms.base.ResponseVo;
 import com.xy.cmbms.entity.dos.User;
 import com.xy.cmbms.entity.vos.UserVo;
+
+import java.util.List;
 
 /**
  * @author Xieyong
@@ -11,12 +14,15 @@ import com.xy.cmbms.entity.vos.UserVo;
  */
 public interface UserService extends IService<User> {
 
-    User getUserByLogin(String userName, String encryPwd);
+    UserVo getUserByLogin(String phone, String encryPwd);
 
-    int isExist(String userName, String pwd);
+    int isExist(String phone, String pwd);
 
     Integer Regist(UserVo userVo);
 
     int updateUserInfo(UserVo userVo);
 
+    void deleteUser(Integer userId);
+
+    List<User> getAllUser();
 }

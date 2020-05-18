@@ -2,20 +2,62 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.xy.cmbms.mapper.BorinfoMapper">
+    
+    <resultMap id="getAduitOrderMap" type="com.xy.cmbms.entity.vos.BorVo">
+        <id column="id" property="id"/>
+        <result column="borrowParty" property="borrowParty"/>
+        <result column="userName" property="userName"/>
+        <result column="targetOffice" property="targetOffice"/>
+        <result column="officeName" property="officeName"/>
+        <result column="borrowTime" property="borrowTime"/>
+        <result column="returnTime" property="returnTime"/>
+        <result column="usefor" property="usefor"/>
+        <collection property="borrowList" ofType="com.xy.cmbms.entity.vos.BorrowVo" column="id">
+                <result column="borinfoId" property="borinfoId"/>
+                <result column="goodsId" property="goodsId"/>
+                <result column="goodsName" property="goodsName"/>
+                <result column="borrowNumber" property="borrowNumber"/>
+                <result column="type" property="type"/>
+                <result column="borrowAddress" property="borrowAddress"/>
+                <result column="returnAddress" property="returnAddress"/>
+        </collection>
+    </resultMap>
 
-    <select id="getAduitOrder" resultType="com.xy.cmbms.entity.vos.BorVo">
-        SELECT a.* ,
-        b.user_name,
-        b.user_id as userId,
+    <select id="getAduitOrder" resultMap="getAduitOrderMap">
+        SELECT
+        a.id as id,
+        a.borrow_party as borrowParty,
+        b.user_name as userName,
+        a.target_office as targetOffice,
         c.name as officeName,
-        c.id as officeId
+        a.borrow_time as borrowTime ,
+        a.return_time as returnTime,
+        a.usefor as usefor,
+		d.goods_id as goodsId,
+		e.goods_name as goodsName,
+		d.borinfo_id as borinfoId,
+		d.borrow_number as borrowNumber,
+		d.borrow_address as borrowAddress,
+		d.return_address as returnAddress
+
         FROM tbl_borinfo a
+        LEFT JOIN tbl_borrow d
+        ON a.id = d.borinfo_id
+        LEFT JOIN tbl_goods e
+        ON d.goods_id = e.id
         LEFT JOIN tbl_user b
         ON a.borrow_party = b.user_id
         LEFT JOIN tbl_office c
-        ON b.office_id = c.id
+        ON a.target_office = c.id
         WHERE a.del_flag = 1 AND ISNULL(a.borrow_opinion)
     </select>
+
+
+    <update id="updateActTime">
+     	UPDATE tbl_borinfo
+	    set actual_returntime = now()
+	    WHERE id = #{orderId}
+    </update>
 
     <select id="getOrderById" resultType="com.xy.cmbms.entity.vos.BorVo">
         SELECT a.* ,
@@ -32,9 +74,15 @@
     </select>
 
     <update id="auditOrder">
-        update tbl_borinfo
-        SET borrow_opinion = #{opinion},audit_by = #{userId}
+        UPDATE tbl_borinfo
+        SET borrow_opinion = #{opinion}, audit_by = #{userId}
         WHERE id = #{orderId} AND del_flag = 1
+    </update>
+
+    <update id="updateOrderType">
+		update tbl_borinfo
+		set	borrow_type = #{borrowType}
+		WHERE id = #{orderId} and del_flag = 1
     </update>
 
     <update id="updateOrderZt">
@@ -42,4 +90,48 @@
         set del_flag = 0
         WHERE id = #{orderId}
     </update>
+
+    <select id="getOrderStatus" resultType="int">
+        SELECT borrow_type
+        FROM tbl_borinfo
+        WHERE id = #{orderId} and del_flag = 1
+    </select>
+
+    <update id="borrowAfter">
+        update tbl_borinfo
+        set borrow_type = 2
+        WHERE id = #{orderId} AND del_flag = 1 AND borrow_opinion != '' AND audit_by != ''
+    </update>
+
+    <select id="getOrderByuserId" resultMap="getAduitOrderMap">
+         SELECT
+        a.id as id,
+        a.borrow_party as borrowParty,
+        b.user_name as userName,
+        a.target_office as targetOffice,
+        c.name as officeName,
+        date_format(a.borrow_time, '%Y-%m-%d') as borrowTime,
+        a.return_time as returnTime,
+        a.usefor as usefor,
+		d.goods_id as goodsId,
+		e.goods_name as goodsName,
+		d.borinfo_id as borinfoId,
+		d.borrow_number as borrowNumber,
+		d.borrow_address as borrowAddress,
+		d.return_address as returnAddress,
+        a.borrow_opinion as borrowOpinion,
+        a.borrow_type as borrowType
+
+        FROM tbl_borinfo a
+        LEFT JOIN tbl_borrow d
+        ON a.id = d.borinfo_id
+        LEFT JOIN tbl_goods e
+        ON d.goods_id = e.id
+        LEFT JOIN tbl_user b
+        ON a.borrow_party = b.user_id
+        LEFT JOIN tbl_office c
+        ON a.target_office = c.id
+        WHERE a.del_flag = 1 AND b.user_id = #{userId} and b.del_flag = 1
+        ORDER BY a.borrow_time DESC
+    </select>
 </mapper>

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,17 +34,18 @@ public class BorinfoServiceImpl extends ServiceImpl<BorinfoMapper, Borinfo> impl
         return list;
     }
 
-
     public int auditOrder(Integer userId, Integer orderId, Integer opinion) {
         BorVo order = borinfoMapper.getOrderById(orderId);
         if(StringUtils.isEmpty(order.getReturnTime())) {
             throw new BusinessException(ErrorEnum.RETURNTIME_IS_NULL);
         }
         borinfoMapper.auditOrder(userId, orderId, opinion);
-        if (opinion == 0) {
+        if (opinion == 0) {//不同意
             borrowMapper.auditOrder(orderId, 3);
-        } else {
-            borrowMapper.auditOrder(orderId, opinion);
+        } else { //1.同意
+            //更改borrow表
+            borrowMapper.auditOrder(orderId, 1);
+            borinfoMapper.updateOrderType(orderId, 1);
         }
         return 1;
     }

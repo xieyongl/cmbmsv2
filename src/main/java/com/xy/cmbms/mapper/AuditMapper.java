@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuditMapper extends BaseMapper<Audit> {
 
-    void updateAuditMsg(@Param("msgId") Integer msgId, @Param("auditResults") Integer auditResults,
-                        @Param("auditOpinion") String auditOpinion, @Param("userId") Integer userId);
+    void updateAuditMsg(@Param("msgId") Integer msgId,
+                        @Param("auditOpinion") int auditOpinion,
+                        @Param("userId") Integer userId);
 }

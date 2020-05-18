@@ -13,11 +13,11 @@ import java.util.Date;
 public class GoodsVo implements Serializable{
 
     private Integer id; //物资id
-    private Integer typeId; //物资类别id
+    private Integer typeId; //物资id
+    private String name; //物资类别名称
     private Integer officeId;  //物资所属组织id
     private String officeName;  //物资所属组织名称
-    private String typeName;    //物资类别名称
-
+    private String goodsName;   //物资名
     private String goodsPic;    //物资类别图
     private Integer goodsTotal;    //此类别物资总数（当前组织）
     private Integer goodsRemain;   //剩余可借数

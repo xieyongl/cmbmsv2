@@ -13,7 +13,8 @@ public class BorrowVo implements Serializable {
 
     private Integer id; //借用申请物资表id
     private Integer borinfoId; //申请借用信息表id
-    private Integer typeId;   //物资类别id
+    private Integer goodsId;   //物资id
+    private String goodsName; //物资名
     private Integer borrowNumber;  //借用数量
     private Integer type;   //借用类型：0.已申请待审核 1.审核通过预借(还未借出)，2.已借（待还）3.已还（作废）
     private String borrowAddress;  //出借物资地点

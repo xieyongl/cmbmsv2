@@ -11,4 +11,6 @@ public class BaseConstant {
     public static final Integer ONE = 1;
 
     public static final Integer NEGATIVEONE = -1;
+
+    public static final String USER_ISNOT_ADMIN ="只有管理员才有权限操作";
 }

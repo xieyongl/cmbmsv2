@@ -2,16 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.xy.cmbms.mapper.TypeGoodsMapper">
-    <!--判断当前机构组织是否有此类别物资-->
+
+    <!--获取物资类别-->
+    <select id="getGoodsTypeList" resultType="com.xy.cmbms.entity.dos.TypeGoods">
+        SELECT *
+        FROM tbl_type_goods
+    </select>
+
+    <!--判断系统是否存在该类别的物资-->
     <select id="hasTypeGoods" resultType="com.xy.cmbms.entity.dos.TypeGoods">
         SELECT *
-        FROM tbl_type_goods tg
-        WHERE  tg.office_id = #{officeId} and tg.type_name = #{typeName}
+        FROM tbl_type_goods
+        WHERE name = #{typeName}
+    </select>
+
+    <!--判断当前机构组织是否有此类型物资-->
+    <select id="hasGoods" resultType="com.xy.cmbms.entity.dos.Goods">
+        SELECT *
+        FROM tbl_goods tg
+        WHERE  tg.office_id = #{officeId} and tg.goods_name = #{goodsName}
     </select>
 
     <!--删除当前机构的该类别物资-->
-    <update id="deleteTypeGoods">
-        UPDATE tbl_type_goods
+    <update id="deleteGoods">
+        UPDATE tbl_goods
           SET  update_by = #{userId},
                update_date = #{updateDate},
                status = 0,
@@ -19,25 +33,34 @@
 		WHERE office_id = #{officeId} and id = #{id} and del_flag = 1
     </update>
 
+
+    <delete id="deleteGoodsType">
+        DELETE
+        FROM tbl_type_goods
+        WHERE id = #{id}
+    </delete>
+
     <!--查询种类物资-->
-    <select id="selectGoodsByTypeId" resultType="com.xy.cmbms.entity.dos.TypeGoods">
+    <select id="selectGoodsById" resultType="com.xy.cmbms.entity.vos.GoodsVo">
       	SELECT *
-		FROM tbl_type_goods
-  		where id = #{typeGoodsId} and del_flag = 1
+		FROM tbl_goods
+  		where id = #{goodsId} and del_flag = 1
 
     </select>
 
     <!--模糊查询物资-->
-    <select id="queryTypeGoods" resultType="com.xy.cmbms.entity.dtos.TypeGoodsDto">
+    <select id="queryTypeGoods" resultType="com.xy.cmbms.entity.vos.GoodsVo">
       SELECT *
-      FROM tbl_type_goods a
+      FROM tbl_goods a
+      LEFT JOIN tbl_type_goods c
+      ON a.type_id = c.id
       LEFT JOIN tbl_office b
       ON a.office_id = b.id
-      where type_name LIKE '%${goodsName}%'
+      where a.goods_name LIKE '%${goodsName}%'
     </select>
 
     <update id="updateRemain">
-      UPDATE tbl_type_goods
+      UPDATE tbl_goods
       SET goods_remain = #{goodsRemain}
       WHERE id = #{typeId}
       AND del_flag = 1
@@ -45,8 +68,8 @@
 
 
     <update id="goodsPlace">
-        UPDATE tbl_type_goods
+        UPDATE tbl_goods
         set goods_remain = #{afterNum}, update_date = NOW()
-        WHERE id = #{typeId}
+        WHERE id = #{goodsId}
     </update>
 </mapper>

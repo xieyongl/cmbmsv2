@@ -4,9 +4,10 @@ package com.xy.cmbms.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xy.cmbms.entity.dos.Goods;
 import com.xy.cmbms.entity.dtos.GoodsDto;
-import com.xy.cmbms.entity.vos.TypeGoodsVo;
+import com.xy.cmbms.entity.vos.GoodsVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -24,24 +25,25 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     int addGoods(Goods goods);
 
     /**
-     * 删除物资(单个)
-     */
-    void deleteGoods(@Param("userId") Integer userId, @Param("goodsId") Integer goodsId, @Param("updateDate") Date updateDate);
-
-    //删除同类所有物资
-    void deleteTypeAllGoods(@Param("userId") Integer userId, @Param("typeId") Integer id, @Param("updateDate") Date updateDate);
-
-
-    /**
-     * 查询组织物资
-     */
-    List<GoodsDto> selectGoodsByTypeId(@Param("typeId") Integer typeId);
-
-    /**
      * 修改物资
      */
     boolean updateGoods(Goods goods);
 
 
-    List<TypeGoodsVo> getGoodsTypeByOfficeId(@Param("officeId") String officeId);
+    List<GoodsVo> getGoodsByOfficeId(@Param("officeId") String officeId);
+
+    /**
+     * 获取所有机构所有物资信息
+     */
+    List<GoodsVo> getAllGoods(@Param("officeId") Integer officeId, @Param("goodsTypeId") Integer goodsTypeId);
+
+    /**
+     *更改物资数量
+     */
+    void updateGoods(@Param("goodsId") Integer goodsId,
+                        @Param("updateTotalNum") Integer updateTotalNum,
+                        @Param("updateRemainNum") Integer updateRemainNum,
+                        @Param("userId") Integer userId,
+                        @Param("goodsStatus") Integer goodsStatus,
+                        @Param("goodsType") Integer goodsType);
 }

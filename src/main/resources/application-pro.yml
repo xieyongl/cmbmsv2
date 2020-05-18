@@ -17,11 +17,13 @@ spring:
 
 
 
-mybatis:
-  #扫描实体(别名)
+mybatis-plus:
+#扫描实体(别名)
   type-aliases-package: com.xy.cmbms.entity.dos
   #mapper xml文件所在位置
   mapper-locations: classpath:mybatis/mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   #开启驼峰命名
 #  configuration:
 #    map-underscore-to-camel-case: true

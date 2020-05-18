@@ -3,15 +3,20 @@ package com.xy.cmbms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xy.cmbms.base.ResponseVo;
+import com.xy.cmbms.constant.BaseConstant;
+import com.xy.cmbms.entity.dos.Goods;
+import com.xy.cmbms.entity.dos.TypeGoods;
 import com.xy.cmbms.entity.vos.GoodsVo;
-import com.xy.cmbms.entity.vos.TypeGoodsVo;
 import com.xy.cmbms.enums.ErrorEnum;
 import com.xy.cmbms.service.GoodsService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -20,87 +25,112 @@ import java.util.List;
  */
 @Api(value = "物资管理", description = "物资管理")
 @RestController
-@RequestMapping("/goodsController")
+@RequestMapping("api/goodsController")
+@CrossOrigin
 public class GoodsController {
 
     @Autowired
     private GoodsService goodsService;
 
     /**
-     * 增加物资类别
-     * @param typeGoodsVo
+     * 增加物资类别(球类，桌椅类)
+     * @param goodsVo
      * @return
      */
-    @ApiOperation(value = "增加物资类别", notes = "增加物资类别")
+    @ApiOperation(value = "增加物资类别(球类，桌椅类)", notes = "增加物资类别(球类，桌椅类)")
     @RequestMapping(value = "/addGoodsType", method = RequestMethod.POST)
-    public ResponseVo addGoodsType(@RequestBody TypeGoodsVo typeGoodsVo) {
-        int typeId = goodsService.addGoodsType(typeGoodsVo);
+    public ResponseVo addGoodsType(@RequestBody GoodsVo goodsVo) {
+        int typeId = goodsService.addGoodsType(goodsVo);
         return new ResponseVo(ErrorEnum.SUCCESS,typeId);
     }
 
     /**
-     * 增加物资数量
+     * 获取物资类别(球类，桌椅类)
+     */
+    @ApiOperation(value = "获取物资类别(球类，桌椅类)", notes = "获取物资类别(球类，桌椅类)")
+    @RequestMapping(value = "/getGoodsTypeList", method = RequestMethod.POST)
+    public ResponseVo getGoodsTypeList() {
+        List<TypeGoods> list = goodsService.getGoodsTypeList();
+        return new ResponseVo(ErrorEnum.SUCCESS,list);
+    }
+
+
+
+    /**
+     * 增加物资名称及数量(篮球 足球)
      * @param goodsVo
      * @return
      */
-//    @ApiOperation(value = "增加物资数量", notes = "增加物资数量")
-//    @RequestMapping(value = "/addGoodsType", method = RequestMethod.POST)
-//    public ResponseVo addGoods(@RequestBody GoodsVo goodsVo) {
-//        int ret =
-//        return new ResponseVo(ErrorEnum.SUCCESS,ret);
-//    }
-
-    /**
-     * 删除物资 (单个)
-     * @param id 物资id
-     */
-    @ApiOperation(value = "删除物资 (单个)", notes = "删除物资 (单个)")
-    @RequestMapping(value = "/deleteGoods", method = RequestMethod.POST)
-    public ResponseVo deleteGoods(@RequestParam(value = "userId") Integer userId, @RequestParam(value = "id") Integer id) {
-        return new ResponseVo(ErrorEnum.SUCCESS, goodsService.deleteGoods(userId, id));
+    @ApiOperation(value = "增加物资名称及数量(篮球 足球)", notes = "增加物资名称及数量(篮球 足球)")
+    @RequestMapping(value = "/addGoods", method = RequestMethod.POST)
+    public ResponseVo addGoods(@RequestBody GoodsVo goodsVo) {
+        int typeId = goodsService.addGoods(goodsVo);
+        return new ResponseVo(ErrorEnum.SUCCESS,typeId);
     }
 
     /**
-     * 删除物资类别
-     * @param typeGoodsVo
+     *
+     * @param flag 1.增加物资数量 2.减少物资数量
+     * @param goodsId
+     * @param updateNum 数量
      * @return
      */
-    @ApiOperation(value = "删除物资类别", notes = "删除物资类别")
-    @RequestMapping(value = "/deleteTypeGoods", method = RequestMethod.POST)
-    public ResponseVo deleteTypeGoods(@RequestBody TypeGoodsVo typeGoodsVo) {
-        return new ResponseVo(ErrorEnum.SUCCESS, goodsService.deleteTypeGoods(typeGoodsVo));
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="flag",value="1.增加物资数量 2.减少物资数量",dataType="Integer", paramType = "query"),
+            @ApiImplicitParam(name="goodsId",value="物资id",dataType="Integer", paramType = "query"),
+            @ApiImplicitParam(name="updateNum",value="增加/减少物资数量",dataType="Integer", paramType = "query"),
+            @ApiImplicitParam(name="goodsStatus",value="物资状态：0.不可借， 1.可借 ",dataType="Integer", paramType = "query"),
+            @ApiImplicitParam(name="goodsType",value="物资大类类型id",dataType="Integer", paramType = "query"),
+            @ApiImplicitParam(name="userId",value="操作用户id",dataType="Integer", paramType = "query")})
+    @ApiOperation(value = "更改物资", notes = "更改物资")
+    @RequestMapping(value = "/updateGoods", method = RequestMethod.POST)
+    public ResponseVo updateGoods(@RequestParam(value = "flag", required = false) Integer flag,
+                                     @RequestParam(value = "goodsId", required = true) Integer goodsId,
+                                     @RequestParam(value = "updateNum", required = false) Integer updateNum,
+                                     @RequestParam(value = "goodsStatus", defaultValue = "1") Integer goodsStatus,
+                                     @RequestParam(value = "goodsType", required = true) Integer goodsType,
+                                     @RequestParam(value = "userId", required = true) Integer userId) {
+        goodsService.updateGoods(flag, goodsId, updateNum, userId, goodsStatus, goodsType);
+        return new ResponseVo(ErrorEnum.SUCCESS);
+    }
+
+
+    /**
+     * 删除物资类型（篮球 足球）
+     * @param
+     * @return
+     */
+    @ApiOperation(value = "删除物资类型（篮球 足球）", notes = "删除物资类型（篮球 足球）")
+    @PostMapping(value = "/deleteTypeGoods")
+    public ResponseVo deleteTypeGoods(@RequestParam(value = "userId") Integer userId,
+                                      @RequestParam(value = "officeId") Integer officeId,
+                                      @RequestParam(value = "id") Integer id) {
+        return new ResponseVo(ErrorEnum.SUCCESS, goodsService.deleteGoods(userId, officeId, id));
     }
 
     /**
-     * 根据物资id查询单个物资
-     * 在不知道物资所属机构组织的情况下可以通过id查询
-     *
+     * 删除物资大类（球类）
+     * @param
+     * @return
      */
-    @ApiOperation(value = "查询单个物资", notes = "查询单个物资")
-    @RequestMapping(value = "/selectGoods", method = RequestMethod.GET)
-    public ResponseVo selectGoods(Integer id) {
-        return new ResponseVo(ErrorEnum.SUCCESS, goodsService.selectGoods(id));
-    }
-
-    /**
-     * 根据物资种类id查询该组织单个种类所有物资
-     *
-     * @param typeId 物资种类id
-     */
-    @ApiOperation(value = "查询种类物资", notes = "查询种类物资")
-    @RequestMapping(value = "/selectTypeGoods", method = RequestMethod.GET)
-    public ResponseVo selectGoodsByTypeId(@RequestParam(value = "typeId") int typeId) {
-        List<GoodsVo> goodsList = goodsService.selectGoodsByTypeId(typeId);
-        return new ResponseVo(ErrorEnum.SUCCESS,goodsList);
+    @ApiOperation(value = "删除物资大类（球类）", notes = "删除物资大类（球类）")
+    @PostMapping(value = "/deleteGoodsType")
+    public ResponseVo deleteGoodsType(@RequestParam(value = "userId") Integer userId,
+                                      @RequestParam(value = "id") Integer id) {
+        int temp = goodsService.deleteGoodsType(userId, id);
+        if (temp == 0) {
+            return new ResponseVo(ErrorEnum.SUCCESS, BaseConstant.USER_ISNOT_ADMIN);
+        }
+        return new ResponseVo(ErrorEnum.SUCCESS, temp);
     }
 
     /**
      * 根据组织机构id获取组织所有物质种类
      */
-    @ApiOperation(value = "获取组织的所有物资种类信息", notes = "获取组织的所有物资种类信息")
+    @ApiOperation(value = "获取组织的所有物资种类信息（足球，篮球）", notes = "获取组织的所有物资种类信息（足球，篮球）")
     @RequestMapping(value = "/queryGoods", method = RequestMethod.GET)
-    public ResponseVo getGoodsTypeByOfficeId(String officeId) {
-        List<TypeGoodsVo> list = goodsService.getGoodsTypeByOfficeId(officeId);
+    public ResponseVo getGoodsTypeByOfficeId(@RequestParam("officeId") String officeId) {
+        List<GoodsVo> list = goodsService.getGoodsByOfficeId(officeId);
         return new ResponseVo(ErrorEnum.SUCCESS,list);
     }
 
@@ -112,8 +142,22 @@ public class GoodsController {
     public ResponseVo queryTypeGoods(@RequestParam(value="goodsName") String goodsName,
                                      @RequestParam(value = "pageNum",defaultValue = "1",required = false) Integer pageNum,
                                      @RequestParam(value = "pageSize",defaultValue = "5",required = false) Integer pageSize) {
-        Page<TypeGoodsVo> page = goodsService.queryTypeGoods(goodsName, pageNum, pageSize);
+        Page<GoodsVo> page = goodsService.queryTypeGoods(goodsName, pageNum, pageSize);
         return new ResponseVo(ErrorEnum.SUCCESS,page);
+    }
+
+    /**
+     * 获取所有机构所有物资信息
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="officeId",value="机构id",dataType="Integer", paramType = "query"),
+            @ApiImplicitParam(name="goodsTypeId",value="物资类型id",dataType="Integer", paramType = "query")})
+    @ApiOperation(value = "获取物资信息", notes = "获取物资信息")
+    @RequestMapping(value = "/getAllGoods", method = RequestMethod.GET)
+    public ResponseVo getAllGoods(@RequestParam(value = "officeId",required = false) Integer officeId,
+                                  @RequestParam(value = "goodsTypeId", required = false) Integer goodsTypeId) {
+        List<GoodsVo> list = goodsService.getAllGoods(officeId, goodsTypeId);
+        return new ResponseVo(ErrorEnum.SUCCESS,list);
     }
 
 }

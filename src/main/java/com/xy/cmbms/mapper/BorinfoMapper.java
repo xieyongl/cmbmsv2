@@ -17,10 +17,25 @@ public interface BorinfoMapper extends BaseMapper<Borinfo> {
 
     List<BorVo> getAduitOrder();
 
+    void updateActTime(@Param("orderId") Integer orderId);
+
     BorVo getOrderById(@Param("orderId") Integer orderId);
 
-    void auditOrder(@Param("orderId") Integer orderId, @Param("userId") Integer userId, @Param("opinion") Integer opinion);
+    void auditOrder(@Param("userId") Integer userId,
+                    @Param("orderId") Integer orderId,
+                    @Param("opinion") Integer opinion);
 
-    //更改订单状态
+    void updateOrderType(@Param("orderId") Integer orderId, @Param("borrowType") int borrowType);
+
+    //更改订单状态(是否有效)
     void updateOrderZt(@Param("orderId") Integer orderId);
+
+    //获取订单状态
+    int getOrderStatus(@Param("orderId") Integer orderId);
+
+    //物资成功借出，改变订单状态
+    void borrowAfter(@Param("orderId") Integer orderId);
+
+    //根据用户id获取订单信息
+    List<BorVo> getOrderByuserId(@Param("userId") Integer userId);
 }

@@ -19,8 +19,8 @@ public interface MessageService extends IService<Message> {
 
     MessageVo getMessage(Integer msgId);
 
-    List<MessageVo> getMessageList();
+    List<MessageVo> getMessageList(int flag);
 
-    int auditMsg(Integer msgId, Integer auditResults, String auditOpinion, Integer userId);
+    int auditMsg(Integer msgId, int auditOpinion, Integer userId);
 
 }
