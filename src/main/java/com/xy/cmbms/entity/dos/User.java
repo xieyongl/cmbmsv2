@@ -14,7 +14,7 @@ import java.util.Date;
  * @author Xieyong
  * @date 2019/12/13 - 18:32
  */
-@TableName("Tbl_user")
+@TableName("tbl_user")
 @Data
 public class User implements Serializable {
 

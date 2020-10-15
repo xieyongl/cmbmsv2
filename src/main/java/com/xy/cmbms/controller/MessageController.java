@@ -72,7 +72,4 @@ public class MessageController {
         List<MessageVo> list = messageService.getMessageList(flag);
         return new ResponseVo(ErrorEnum.SUCCESS,list);
     }
-
-
-
 }

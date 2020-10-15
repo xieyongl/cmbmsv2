@@ -9,6 +9,8 @@
         <result column="userName" property="userName"/>
         <result column="targetOffice" property="targetOffice"/>
         <result column="officeName" property="officeName"/>
+        <result column="borrowOpinion" property="borrowOpinion"/>
+        <result column="borrowType" property="borrowType"/>
         <result column="borrowTime" property="borrowTime"/>
         <result column="returnTime" property="returnTime"/>
         <result column="usefor" property="usefor"/>

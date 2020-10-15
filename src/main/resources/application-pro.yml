@@ -6,9 +6,11 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/xy?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
+#    url: jdbc:mysql://47.112.245.199:3306/xy?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false
     username: root
     password: 123456
-
+#    username: xieyong
+#    password: 425404820
   #Redis 配置（暂不用也行）
   redis:
     host: 127.0.0.1
